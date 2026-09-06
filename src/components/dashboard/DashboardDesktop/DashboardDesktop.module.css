@@ -1,0 +1,138 @@
+/* ── Period bar ──────────────────────────────────────────────── */
+.periodBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5, 1.25rem);
+  gap: var(--space-4, 1rem);
+}
+
+.tabs {
+  display: flex;
+  gap: 0;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e5e8ec);
+  border-radius: var(--radius-sm, 0.375rem);
+  overflow: hidden;
+}
+
+.tab {
+  padding: 0.4rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted, #737a87);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1.5;
+}
+
+.tab:not(:last-child) {
+  border-right: 1px solid var(--color-border, #e5e8ec);
+}
+
+.tabActive {
+  background: var(--color-primary-700, #0F4C81);
+  color: #fff;
+}
+
+.periodNav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+}
+
+.arrowBtn {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--color-border, #e5e8ec);
+  border-radius: var(--radius-sm, 0.375rem);
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #22252a);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s;
+}
+
+.arrowBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.periodLabel {
+  font-size: 0.875rem;
+  color: var(--color-text-muted, #737a87);
+  min-width: 14rem;
+  text-align: center;
+}
+
+/* ── Stat grid ───────────────────────────────────────────────── */
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4, 1rem);
+  margin-bottom: var(--space-6, 1.5rem);
+}
+
+@media (max-width: 1100px) {
+  .statGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Bottom row ──────────────────────────────────────────────── */
+.bottomRow {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: var(--space-5, 1.25rem);
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .bottomRow { grid-template-columns: 1fr; }
+}
+
+.tyreStatusCard {
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e5e8ec);
+  border-radius: var(--radius-md, 0.625rem);
+  padding: var(--space-5, 1.25rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5, 1.25rem);
+}
+
+.activityCard {
+  min-height: 400px;
+}
+
+.cardTitle {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--color-text, #22252a);
+}
+
+/* ── Skeleton ────────────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--radius-sm, 0.375rem);
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Error ───────────────────────────────────────────────────── */
+.errorBanner {
+  padding: var(--space-4, 1rem);
+  background: #fce8e6;
+  color: #d93025;
+  border-radius: var(--radius-sm, 0.375rem);
+  font-size: 0.875rem;
+  margin-bottom: var(--space-4, 1rem);
+}

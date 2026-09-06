@@ -1,0 +1,122 @@
+.card {
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e5e8ec);
+  border-radius: var(--radius-md, 0.625rem);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5, 1.25rem) var(--space-5, 1.25rem) var(--space-4, 1rem);
+  border-bottom: 1px solid var(--color-border, #e5e8ec);
+}
+
+.title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--color-text, #22252a);
+}
+
+.viewAll {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-primary-700, #0f4c81);
+}
+
+.viewAll:hover {
+  text-decoration: underline;
+}
+
+/* Activity list */
+.list {
+  list-style: none;
+  flex: 1;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+}
+
+.item.bordered {
+  border-bottom: 1px solid var(--color-neutral-100, #f2f3f5);
+}
+
+.iconWrap {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-full, 9999px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.itemTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text, #22252a);
+}
+
+.itemSub {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted, #737a87);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1, 0.25rem);
+  flex-wrap: wrap;
+}
+
+.dot {
+  color: var(--color-neutral-400, #b4bac4);
+}
+
+.badge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  background: var(--color-primary-50, #f0f7fd);
+  color: var(--color-primary-700, #0f4c81);
+  padding: 1px 7px;
+  border-radius: var(--radius-full, 9999px);
+  border: 1px solid var(--color-primary-200, #c0dff5);
+  white-space: nowrap;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.time {
+  font-size: 0.75rem;
+  color: var(--color-text-muted, #737a87);
+  white-space: nowrap;
+}
+
+.amount {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text, #22252a);
+  white-space: nowrap;
+}
+
+.amountDanger {
+  color: #d93025;
+}

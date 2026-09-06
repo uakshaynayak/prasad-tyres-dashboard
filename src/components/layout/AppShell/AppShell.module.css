@@ -1,0 +1,54 @@
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar wrapper — just prevents shrinking, sidebar styles its own width */
+.desktopSidebar {
+  flex-shrink: 0;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.desktopTopBar {
+  /* visible by default */
+}
+
+/* Mobile elements hidden on desktop */
+.mobileTopBar,
+.mobileNav {
+  display: none;
+}
+
+.main {
+  flex: 1;
+  padding: var(--space-6, 1.5rem);
+  background: var(--color-bg, #f8f9fa);
+  overflow-y: auto;
+}
+
+@media (max-width: 767px) {
+  .desktopSidebar,
+  .desktopTopBar {
+    display: none;
+  }
+
+  .mobileTopBar {
+    display: block;
+  }
+
+  .mobileNav {
+    display: block;
+  }
+
+  .main {
+    padding: var(--space-4, 1rem);
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  }
+}
