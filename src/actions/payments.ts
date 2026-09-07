@@ -127,7 +127,7 @@ function computeStats(raw: ApiPayment[]): PaymentStats {
 
 // ── Fetch ──────────────────────────────────────────────────────
 
-const API_BASE = process.env.API_BASE_URL;
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function fetchPayments(): Promise<{
   entries: PaymentEntry[];

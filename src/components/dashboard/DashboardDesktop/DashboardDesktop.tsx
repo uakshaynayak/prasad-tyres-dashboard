@@ -198,7 +198,7 @@ export function DashboardDesktop() {
       <div className={styles.statGrid}>
         {loading
           ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
-          : cards!.map((card) => <StatCard key={card.label} {...card} />)
+          : (cards ?? []).map((card) => <StatCard key={card.label} {...card} />)
         }
       </div>
 
