@@ -41,10 +41,12 @@ function mapPaymentToApi(p: string) {
   return p;
 }
 
-function buildUrl(page: number, status: string, payment: string) {
+function buildUrl(page: number, status: string, payment: string, search: string, tyreSize: string) {
   const params = new URLSearchParams({ page: String(page), limit: String(LIMIT) });
   if (status)  params.set("deliveryStatus", status);
   if (payment) params.set("paymentStatus", mapPaymentToApi(payment));
+  if (search.trim()) params.set("search", search.trim());
+  if (tyreSize.trim()) params.set("tyreSize", tyreSize.trim());
   return `${API}/api/tyres?${params}`;
 }
 
@@ -65,7 +67,14 @@ type ChipPayment = "" | "Unpaid" | "Partial" | "Paid";
 
 export function TyresMobile() {
   const [page,         setPage]         = useState(1);
-  const [vehicleQuery, setVehicleQuery] = useState("");
+  const [vehicleQuery, setVehicleQuery] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return new URLSearchParams(window.location.search).get("search") ?? "";
+  });
+  const [tyreSizeQuery, setTyreSizeQuery] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return new URLSearchParams(window.location.search).get("tyreSize") ?? "";
+  });
   const [statusChip,   setStatusChip]   = useState<ChipStatus>("");
   const [paymentChip,  setPaymentChip]  = useState<ChipPayment>("");
   const [entries,      setEntries]      = useState<TyreEntry[]>([]);
@@ -76,9 +85,21 @@ export function TyresMobile() {
   const [selectedId,   setSelectedId]   = useState<string | null>(null);
 
   useEffect(() => {
+    const search = vehicleQuery.trim();
+    const tyreSize = tyreSizeQuery.trim();
+    const url = new URL(window.location.href);
+    if (search) url.searchParams.set("search", search);
+    else url.searchParams.delete("search");
+    if (tyreSize) url.searchParams.set("tyreSize", tyreSize);
+    else url.searchParams.delete("tyreSize");
+    window.history.replaceState({}, "", `${url.pathname}${url.search}`);
+  }, [vehicleQuery, tyreSizeQuery]);
+
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetch(buildUrl(page, statusChip, paymentChip))
+    fetch(buildUrl(page, statusChip, paymentChip, vehicleQuery, tyreSizeQuery))
       .then((r) => r.json())
       .then((json) => {
         if (cancelled) return;
@@ -91,7 +112,8 @@ export function TyresMobile() {
       })
       .catch(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [page, statusChip, paymentChip]);
+  }, [page, statusChip, paymentChip, vehicleQuery, tyreSizeQuery]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   function toggleStatus(val: ChipStatus) {
     setStatusChip((prev) => (prev === val ? "" : val));
@@ -102,9 +124,13 @@ export function TyresMobile() {
     setPage(1);
   }
 
-  const visible = vehicleQuery
-    ? entries.filter((r) => r.vehicleNo.toLowerCase().includes(vehicleQuery.toLowerCase()))
-    : entries;
+  const vehicleTerm = vehicleQuery.trim().toLowerCase();
+  const tyreSizeTerm = tyreSizeQuery.trim().toLowerCase();
+  const visible = entries.filter((r) => {
+    const matchesVehicle = !vehicleTerm || r.vehicleNo.toLowerCase().includes(vehicleTerm);
+    const matchesTyreSize = !tyreSizeTerm || r.tyreSize.toLowerCase().includes(tyreSizeTerm);
+    return matchesVehicle && matchesTyreSize;
+  });
 
   const pendingQty = entries.filter((r) => r.status === "Pending").reduce((s, r) => s + r.qty, 0);
   const unpaidAmt  = entries
@@ -143,7 +169,24 @@ export function TyresMobile() {
           className={styles.searchInput}
           placeholder="Search Vehicle Number"
           value={vehicleQuery}
-          onChange={(e) => setVehicleQuery(e.target.value)}
+          onChange={(e) => {
+            setVehicleQuery(e.target.value);
+            setPage(1);
+          }}
+        />
+      </label>
+
+      <label className={styles.searchBar}>
+        <SearchIcon />
+        <input
+          type="text"
+          className={styles.searchInput}
+          placeholder="Search Tyre Size"
+          value={tyreSizeQuery}
+          onChange={(e) => {
+            setTyreSizeQuery(e.target.value);
+            setPage(1);
+          }}
         />
       </label>
 

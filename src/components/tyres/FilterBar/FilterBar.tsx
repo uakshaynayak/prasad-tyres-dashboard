@@ -8,10 +8,12 @@ interface FilterBarProps {
   statusFilter: string;
   paymentFilter: string;
   vehicleQuery: string;
+  tyreSizeQuery: string;
   onDateRange: (v: string) => void;
   onStatus: (v: string) => void;
   onPayment: (v: string) => void;
   onVehicle: (v: string) => void;
+  onTyreSize: (v: string) => void;
   onNew: () => void;
 }
 
@@ -40,8 +42,8 @@ function SearchSmIcon() {
 }
 
 export function FilterBar({
-  dateRange, statusFilter, paymentFilter, vehicleQuery,
-  onDateRange, onStatus, onPayment, onVehicle, onNew,
+  dateRange, statusFilter, paymentFilter, vehicleQuery, tyreSizeQuery,
+  onDateRange, onStatus, onPayment, onVehicle, onTyreSize, onNew,
 }: FilterBarProps) {
   return (
     <div className={styles.bar}>
@@ -103,9 +105,20 @@ export function FilterBar({
           <input
             type="text"
             className={styles.vehicleInput}
-            placeholder="Filter by Vehicle No..."
+            placeholder="Vehicle No..."
             value={vehicleQuery}
             onChange={(e) => onVehicle(e.target.value)}
+          />
+        </label>
+
+        <label className={styles.vehicleSearch}>
+          <SearchSmIcon />
+          <input
+            type="text"
+            className={styles.vehicleInput}
+            placeholder="Tyre Size..."
+            value={tyreSizeQuery}
+            onChange={(e) => onTyreSize(e.target.value)}
           />
         </label>
 

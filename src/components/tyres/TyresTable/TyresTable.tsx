@@ -81,10 +81,12 @@ function mapPaymentToApi(p: string): string {
   return p;
 }
 
-function buildUrl(page: number, status: string, payment: string): string {
+function buildUrl(page: number, status: string, payment: string, search: string, tyreSize: string): string {
   const params = new URLSearchParams({ page: String(page), limit: String(LIMIT) });
   if (status)  params.set("deliveryStatus", status);
   if (payment) params.set("paymentStatus",  mapPaymentToApi(payment));
+  if (search.trim()) params.set("search", search.trim());
+  if (tyreSize.trim()) params.set("tyreSize", tyreSize.trim());
   return `${API}/api/tyres?${params}`;
 }
 
@@ -109,7 +111,14 @@ export function TyresTable() {
   const [dateRange,     setDateRange]     = useState("30");
   const [statusFilter,  setStatusFilter]  = useState("");
   const [paymentFilter, setPaymentFilter] = useState("");
-  const [vehicleQuery,  setVehicleQuery]  = useState("");
+  const [vehicleQuery,  setVehicleQuery]  = useState(() => {
+    if (typeof window === "undefined") return "";
+    return new URLSearchParams(window.location.search).get("search") ?? "";
+  });
+  const [tyreSizeQuery, setTyreSizeQuery] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return new URLSearchParams(window.location.search).get("tyreSize") ?? "";
+  });
   const [entries,       setEntries]       = useState<TyreEntry[]>([]);
   const [pagination,    setPagination]    = useState<ApiPagination>({ page: 1, limit: LIMIT, total: 0, totalPages: 1 });
   const [loading,       setLoading]       = useState(true);
@@ -117,9 +126,21 @@ export function TyresTable() {
   const [selectedId,    setSelectedId]    = useState<string | null>(null);
 
   useEffect(() => {
+    const search = vehicleQuery.trim();
+    const tyreSize = tyreSizeQuery.trim();
+    const url = new URL(window.location.href);
+    if (search) url.searchParams.set("search", search);
+    else url.searchParams.delete("search");
+    if (tyreSize) url.searchParams.set("tyreSize", tyreSize);
+    else url.searchParams.delete("tyreSize");
+    window.history.replaceState({}, "", `${url.pathname}${url.search}`);
+  }, [vehicleQuery, tyreSizeQuery]);
+
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetch(buildUrl(page, statusFilter, paymentFilter))
+    fetch(buildUrl(page, statusFilter, paymentFilter, vehicleQuery, tyreSizeQuery))
       .then((r) => r.json())
       .then((json) => {
         if (cancelled) return;
@@ -131,16 +152,30 @@ export function TyresTable() {
       })
       .catch(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [page, statusFilter, paymentFilter]);
+  }, [page, statusFilter, paymentFilter, vehicleQuery, tyreSizeQuery]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   function handleFilterChange<T>(setter: (v: T) => void) {
     return (v: T) => { setter(v); setPage(1); };
   }
 
-  // Vehicle search is client-side on current page
-  const visible = vehicleQuery
-    ? entries.filter((r) => r.vehicleNo.toLowerCase().includes(vehicleQuery.toLowerCase()))
-    : entries;
+  function handleVehicleChange(nextValue: string) {
+    setVehicleQuery(nextValue);
+    setPage(1);
+  }
+
+  function handleTyreSizeChange(nextValue: string) {
+    setTyreSizeQuery(nextValue);
+    setPage(1);
+  }
+
+  const vehicleTerm = vehicleQuery.trim().toLowerCase();
+  const tyreSizeTerm = tyreSizeQuery.trim().toLowerCase();
+  const visible = entries.filter((r) => {
+    const matchesVehicle = !vehicleTerm || r.vehicleNo.toLowerCase().includes(vehicleTerm);
+    const matchesTyreSize = !tyreSizeTerm || r.tyreSize.toLowerCase().includes(tyreSizeTerm);
+    return matchesVehicle && matchesTyreSize;
+  });
 
   const pendingCount = entries.filter((r) => r.status === "Pending").length;
 
@@ -177,10 +212,12 @@ export function TyresTable() {
           statusFilter={statusFilter}
           paymentFilter={paymentFilter}
           vehicleQuery={vehicleQuery}
+          tyreSizeQuery={tyreSizeQuery}
           onDateRange={handleFilterChange(setDateRange)}
           onStatus={handleFilterChange(setStatusFilter)}
           onPayment={handleFilterChange(setPaymentFilter)}
-          onVehicle={setVehicleQuery}
+          onVehicle={handleVehicleChange}
+          onTyreSize={handleTyreSizeChange}
           onNew={() => setModalOpen(true)}
         />
 
